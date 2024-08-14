@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "user")
+@Table(name = "tbl_user")
 public class UserEntity extends AuditAware {
 
     @Id
@@ -19,6 +19,7 @@ public class UserEntity extends AuditAware {
     private String authId;
 
     private String identification;
+
 
     @Enumerated(EnumType.STRING)
     private Status status;
