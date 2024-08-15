@@ -6,6 +6,7 @@ import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -24,6 +25,12 @@ public class UserServiceImpl implements UserService {
     private String realm;
     private final Keycloak keycloak;
 
+    /*
+     * @author: TanTD1
+     * @since: 8/15/2024 10:33 AM
+     * @description:  create user in keycloak then verify email
+
+     * */
     @Override
     public void createUser(NewUserRecord newUserRecord) {
 
@@ -32,6 +39,7 @@ public class UserServiceImpl implements UserService {
         userRepresentation.setUsername(newUserRecord.username());
         userRepresentation.setFirstName(newUserRecord.firstName());
         userRepresentation.setLastName(newUserRecord.lastName());
+        userRepresentation.setEmail(newUserRecord.email());
         userRepresentation.setEnabled(true);
         userRepresentation.setEmailVerified(false);
 
@@ -46,19 +54,48 @@ public class UserServiceImpl implements UserService {
 
         Response response = usersResource.create(userRepresentation);
 
-        log.info("Status Code "+response.getStatus());
+        log.info("Status Code " + response.getStatus());
 
-        if(!Objects.equals(201,response.getStatus())){
+        if (!Objects.equals(201, response.getStatus())) {
 
-            throw new RuntimeException("Status code "+response.getStatus());
+            throw new RuntimeException("Status code " + response.getStatus());
         }
 
         log.info("New user has bee created");
 
+        List<UserRepresentation> userRepresentationListCurrent = usersResource.searchByUsername(newUserRecord.username(), true);
+        UserRepresentation userRepresentationCurrent = userRepresentationListCurrent.get(0);
+        sendVerificationEmail(userRepresentationCurrent.getId());
+
+
     }
 
-    private UsersResource getUsersResource(){
+    @Override
+    public void sendVerificationEmail(String id) {
+        UsersResource usersResource = getUsersResource();
+        usersResource.get(id).sendVerifyEmail();
 
+    }
+
+    @Override
+    public void deleteUser(String userId) {
+        UsersResource userResource = getUsersResource();
+        userResource.delete(userId);
+    }
+
+    @Override
+    public void forgotPassword(String username) {
+        UsersResource usersResource = getUsersResource();
+        List<UserRepresentation> userRepresentations = usersResource.searchByUsername(username, true);
+        UserRepresentation userRepresentation1 = userRepresentations.get(0);
+        UserResource userResource = usersResource.get(userRepresentation1.getId());
+        userResource.executeActionsEmail(List.of("UPDATE_PASSWORD"));
+
+
+
+    }
+
+    private UsersResource getUsersResource() {
         return keycloak.realm(realm).users();
     }
 

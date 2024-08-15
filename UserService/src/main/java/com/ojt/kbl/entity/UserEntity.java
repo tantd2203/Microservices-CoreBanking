@@ -20,7 +20,6 @@ public class UserEntity extends AuditAware {
 
     private String identification;
 
-
     @Enumerated(EnumType.STRING)
     private Status status;
 
