@@ -20,10 +20,11 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-
+@Transactional
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -89,7 +90,8 @@ public class UserServiceImpl implements UserService {
             log.info("User created under given username {}", newUserRecord.email());
             UserEntity userEntity  = new UserEntity();
             userEntity.setAuthId(userRepresentationCurrent.getId());
-            userEntity.setStatus(Status.PENDING);
+            userEntity.setIdentification(newUserRecord.identification());
+            userEntity.setStatus(Status.APPROVED);
             userRepository.save(userEntity);
         }
 
@@ -105,7 +107,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(String userId) {
         UsersResource userResource = getUsersResource();
+
+        userRepository.deleteByAuthId(userId);
         userResource.delete(userId);
+
     }
 
     @Override

@@ -37,7 +37,3 @@ build/
 ### Mac OS ###
 .DS_Store
 # ingore docker volumes
-
-docker/**
-
-docker

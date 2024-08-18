@@ -8,11 +8,15 @@
         <option value="$PROJECT_DIR$/demo/pom.xml" />
         <option value="$PROJECT_DIR$/UserService/pom.xml" />
         <option value="$PROJECT_DIR$/internet-banking-api-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/internet-banking-service-discovery/pom.xml" />
+        <option value="$PROJECT_DIR$/internet-banking-discovery-service/pom.xml" />
+        <option value="$PROJECT_DIR$/internet-banking-congfig/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/demo/pom.xml" />
+        <option value="$PROJECT_DIR$/internet-banking-service-discovery/pom.xml" />
       </set>
     </option>
   </component>

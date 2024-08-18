@@ -1,6 +1,5 @@
 services:
 
-
   postgres:
     image: postgres:16.2
     volumes:
@@ -48,6 +47,34 @@ services:
         - 3302:3306
       volumes:
         - ./docker/mysql_data:/var/lib/mysql
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+    networks:
+      - microservices-net
+  kafka:
+      image: confluentinc/cp-kafka
+      container_name: ms_kafka
+      ports:
+        - "9092:9092"
+      depends_on:
+        - zookeeper
+      environment:
+        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+        KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+        KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+        KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+        KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      networks:
+        - microservices-net
 #  vault:
 #    image: vault:1.13.3
 #    container_name: vault
@@ -71,6 +98,8 @@ volumes:
 
 networks:
   keycloak_network:
+    driver: bridge
+  microservices-net:
     driver: bridge
   mysql_network:
     driver: bridge

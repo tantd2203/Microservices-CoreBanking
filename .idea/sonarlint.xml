@@ -3,6 +3,7 @@
   <component name="SonarLintProjectSettings">
     <option name="moduleMapping">
       <map>
+        <entry key="internet-banking-config" value="internet-banking-congfig" />
         <entry key="internet-banking-user-service" value="UserService" />
       </map>
     </option>
